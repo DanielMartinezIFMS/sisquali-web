@@ -1,7 +1,15 @@
 <template>
     <div id="app" class="flexCol">
-        <div class="bc-silver">
-        <h2 class="ml-2">SISQUALI</h2>
+        <div class="bc-silver flexRow">
+            <div>
+                <h2 class="ml-2">SISQUALI</h2>
+            </div>
+            <div class="flexGrow d-flex flexSpaceAround pt-5">
+                <router-link :to="{name:'AmostraTipoCad'}">Tipos de Amostra</router-link>
+                <router-link :to="{name:'LaboratorioCad'}">Laboratorios</router-link>
+                <router-link :to="{name:'PlanoOperacionalCad'}">Plano Operacional</router-link>
+                <router-link :to="{name:'PlanoOperacionalAprov'}">Aprovar Plano Op.</router-link>
+            </div>
         </div>
         <div class="flexGrow">
             <router-view/>
@@ -214,10 +222,18 @@
         display: contents;
     }
 
+
+    .d-flex {
+        display: flex;
+    }
+
     .flexStartAlign {
         align-items: flex-start;
     }
 
+    .flexSpaceAround {
+        justify-content: space-around;
+    }
     .w-auto {
         width: auto !important;
     }

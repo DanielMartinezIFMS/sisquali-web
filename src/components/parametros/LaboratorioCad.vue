@@ -1,5 +1,5 @@
 <template>
-    
+    <span> Implemente o cadastro de laboratorios aqui</span>
 </template>
 
 <script>

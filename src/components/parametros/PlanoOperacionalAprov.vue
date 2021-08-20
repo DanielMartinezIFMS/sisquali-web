@@ -1,5 +1,5 @@
 <template>
-    
+    <span> Implemente a aprovação do plano operacional aqui</span>
 </template>
 
 <script>
