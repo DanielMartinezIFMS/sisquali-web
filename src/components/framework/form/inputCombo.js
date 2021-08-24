@@ -41,16 +41,14 @@ export default Vue.component('inputCombo', {
           }
         }
       }, list.map((op, index) => {
-        if (self.display) {
           return createElement('option', {attrs: {value: index}}, op[self.display]);
-        } else {
-          return createElement('option', {attrs: {value: index}}, op);
-        }
       })),
       e
     ]);
   },
   created: function () {
+    if(!this.display)
+      this.display='nome';
     this.atualizar();
   },
   updated: function () {

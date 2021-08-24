@@ -1,10 +1,14 @@
 <template>
-    <span> Implemente o cadastro de tipos de amostra aqui</span>
+    <div class="full d-flex">
+        <div class="bc-silver flexGrow">esq</div>
+        <div style="width: 20em">dir</div>
+    </div>
 </template>
 
 <script>
     export default {
-        name: "AmostraTipoCad"
+        name: "AmostraTipoCad",
+
     }
 </script>
 
