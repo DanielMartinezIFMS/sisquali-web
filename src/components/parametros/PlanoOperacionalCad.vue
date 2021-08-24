@@ -5,7 +5,8 @@
         <cr-crud-form>
           <cr-panel boxShadow labelTop>
             <input-auto label="Projeto" v-model="cadastro.projeto" :config="projetoConf"/>
-            <input-combo label="Laboratório" v-model="cadastro.laboratorio" :collection="laboratorios"/>
+            <input-combo label="Laboratório" v-model="cadastro.laboratorio" @change="(lab)=>{this.ensaios = lab.ensaios;}" :collection="laboratorios"/>
+            <input-combo label="Ensaio" v-model="cadastro.ensaio" @change="(ens)=>{this.amostras = ens.amostras;}" :collection="ensaios"/>
 
           </cr-panel>
         </cr-crud-form>
