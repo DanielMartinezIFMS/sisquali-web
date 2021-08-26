@@ -1,7 +1,6 @@
 <template>
     <cr-crud collection="lista" entity="cadastro" config="crudConf">
         <cr-crud-grid :config="gridConf" class="mt-2"/>
-
         <cr-crud-form>
           <cr-panel boxShadow labelTop>
             <input-auto label="Projeto" v-model="cadastro.projeto" :config="projetoConf"/>
@@ -10,7 +9,6 @@
             <input-combo label="Tipo de Amostra" v-model="cadastro.amostraTipo" :collection="amostras" display="descricao"/>
             <input-integer label="Quantidade" v-model="cadastro.quantidade" min="0"/>
             <input-date label="Data de Entrega" v-model="cadastro.dtEntrega"/>
-
           </cr-panel>
           <cr-crud-buttons/>
         </cr-crud-form>

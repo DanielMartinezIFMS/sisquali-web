@@ -1,9 +1,7 @@
 <template>
-    <div class="full d-flex">
-        <cr-crud>
-            <cr-crud-tree :collection="lista"/>
-        </cr-crud>
-    </div>
+    <cr-crud collection="lista" entity="cadastro">
+        <cr-crud-tree :collection="lista"/>
+    </cr-crud>
 </template>
 
 <script>
@@ -15,7 +13,8 @@
         components: {CrCrud,CrCrudTree},
         data: function(){
             return {
-                lista:[]
+                lista:[],
+                cadastro:{}
             }
         },
         created: async function(){
