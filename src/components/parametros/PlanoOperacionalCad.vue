@@ -8,7 +8,7 @@
             <input-combo label="Laboratório" v-model="cadastro.laboratorio" @change="(lab)=>{this.ensaios = lab.ensaios;}" :collection="laboratorios"/>
             <input-combo label="Ensaio" v-model="cadastro.ensaio" @change="(ens)=>{this.amostras = ens.tipoAmostras;}" :collection="ensaios"/>
             <input-combo label="Tipo de Amostra" v-model="cadastro.amostraTipo" :collection="amostras" display="descricao"/>
-            <input-integer label="Quantidade" v-model="cadastro.quantidade" />
+            <input-integer label="Quantidade" v-model="cadastro.quantidade" min="0"/>
             <input-date label="Data de Entrega" v-model="cadastro.dtEntrega"/>
 
           </cr-panel>
@@ -52,7 +52,7 @@ import CrCrudButtons from '../framework/crud/crCrudButtons';
             displayField: 'codigo'
           },
           gridConf: {
-            fields: 'Projeto|100=>projeto.codigo,Laboratório|100=>laboratorio.nome,Ensaio|100=>ensaio.nome,Tipo de Amostra|100=>amostraTipo.descricao,Quantidade|100=>quantidade,Data da Entrega|100=>dtEntrega,Status|100=>situacao.nome'
+            fields: 'Projeto|50=>projeto.codigo,Laboratório|100=>laboratorio.nome,Ensaio|100=>ensaio.nome,Tipo de Amostra|100=>amostraTipo.descricao,Quantidade|45C=>quantidade,Data da Entrega|60C|mask(DATA)=>dtEntrega,Status|100C=>situacao.nome'
           },
           laboratorios: [],
 
