@@ -1,13 +1,26 @@
 <template>
     <div class="full d-flex">
-        <div class="bc-silver flexGrow">esq</div>
-        <div style="width: 20em">dir</div>
+        <cr-crud>
+            <cr-crud-tree :collection="lista"/>
+        </cr-crud>
     </div>
 </template>
 
 <script>
+    import ctt from '../parametros/Constants';
+    import CrCrud from '../framework/crud/crCrud';
+    import CrCrudTree from '../framework/crud/crCrudTree';
     export default {
-        name: "AmostraTipoCad",
+        name: 'AmostraTipoCad',
+        components: {CrCrud,CrCrudTree},
+        data: function(){
+            return {
+                lista:[]
+            }
+        },
+        created: async function(){
+            this.lista = await this.$get(ctt.rest+'/amostraTipo/listar')
+        }
 
     }
 </script>
