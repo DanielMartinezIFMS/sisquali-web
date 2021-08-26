@@ -32,6 +32,7 @@ import CrCrudButtons from '../framework/crud/crCrudButtons';
       name: 'PlanoOperacionalCad',
       components: {InputAuto, CrCrud, CrCrudGrid, CrCrudForm, CrPanel,InputCombo, InputInteger, InputDate, CrCrudButtons},
       data: function () {
+        let self = this;
         return {
           lista: [],
           ensaios: [],
@@ -42,7 +43,7 @@ import CrCrudButtons from '../framework/crud/crCrudButtons';
             url: ctt.rest + '/planoOperacinal',
             onBeforeSave: function (ent, op){
               if(op==='INSERT'){
-                ent.status= this.status;
+                ent.situacao = self.status;
               }
             }
           },

@@ -88,6 +88,7 @@
                 }
 
                 if (c.onBeforeSave) {
+                    console.log('ops');
                     await c.onBeforeSave(self.$parent[self.entity],(self.$parent[self.$props.entity][self.idField]) ? 'UPDATE' : 'INSERT');
                 }
 
