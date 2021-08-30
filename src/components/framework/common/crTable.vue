@@ -15,7 +15,7 @@
                     </td>
                     <td v-if="config.options" :style="larguraOpt()" >
                         <template v-for="(bt,index) in config.options.buttons" >
-                            <button type="button" class="p-2 m-1" :atualizatitle="title" :key="index" v-if="!bt.show || bt.show(item)" @click="()=>bt.click(item)">
+                            <button type="button" class="p-2 m-1" :title="title" :key="index" v-if="!bt.show || bt.show(item)" @click="()=>bt.click(item)">
                                 <font-awesome-icon v-if="bt.icon" :icon="bt.icon" class="mr-1"/>
                                 <template v-if="bt.label">{{bt.label}}</template>
                             </button>
@@ -67,7 +67,7 @@
      */
     export default {
         name: "crTable",
-        props: ['collection', 'config'],
+        props: ['collection', 'config','title'],
         beforeMount: function(){
           this.captarMetadados();
           this.processarMetadados();
