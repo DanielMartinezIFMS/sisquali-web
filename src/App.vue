@@ -777,6 +777,9 @@
         border: 1px solid silver;
     }
 
+    .crudTreeItem:hover{
+        background-color: silver;
+    }
     .panelTitle {
         border-bottom: 1px solid silver;
         font-size: 0.8em;
@@ -800,7 +803,18 @@
         margin: 1px;
         border-radius: 3px;
     }
-
+    .bordered {
+        outline: none !important;
+        border: 1px solid silver;
+        margin: 1px;
+        border-radius: 3px;
+    }
+    .noBorder, .noBorder:focus{
+        border: none;
+    }
+    .noSelect {
+        user-select: none;
+    }
     .error > input {
         border: 1px solid red;
     }
@@ -974,7 +988,7 @@
     }
 
     .crudButton.secondary {
-        background-color: #a88579;
+        background-color: #b6b7bc;
         color: white;
     }
 

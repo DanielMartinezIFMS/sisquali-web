@@ -15,7 +15,7 @@
                     </td>
                     <td v-if="config.options" :style="larguraOpt()" >
                         <template v-for="(bt,index) in config.options.buttons" >
-                            <button type="button" class="p-2 m-1" :key="index" v-if="!bt.show || bt.show(item)" @click="()=>bt.click(item)">
+                            <button type="button" class="p-2 m-1" :atualizatitle="title" :key="index" v-if="!bt.show || bt.show(item)" @click="()=>bt.click(item)">
                                 <font-awesome-icon v-if="bt.icon" :icon="bt.icon" class="mr-1"/>
                                 <template v-if="bt.label">{{bt.label}}</template>
                             </button>
@@ -52,12 +52,12 @@
      *          {icon:<String>,label:<String>,click:<function(row)>,show:<function(row)>},
      *          ...
      *        ]
-     *      onClick: (item)=> {}
+     *      onClick: (item)=> {}  - função a ser executada ao clicar em uma linha da tabela
      *    }
      *
      *  }
      *  <D> - Disposição na coluna ( C - Centro ou R - Direita ou L - Esquerda )
-     *  <Formato> - image | mask(Mascara)
+     *  <Formato> - image | mask('Mascara')
      *
      *  ******************************
      *  O Tamanho é intuitivo, defina uma tamanho para o maior campo e com base nele defina o dos demais
