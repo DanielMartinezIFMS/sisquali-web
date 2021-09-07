@@ -9,6 +9,7 @@
                 <router-link :to="{name:'LaboratorioCad'}">Laboratorios</router-link>
                 <router-link :to="{name:'PlanoOperacionalCad'}">Plano Operacional</router-link>
                 <router-link :to="{name:'PlanoOperacionalAprov'}">Aprovar Plano Op.</router-link>
+                <router-link :to="{name:'EnsaioTipoCad'}">Tipos de Ensaio</router-link>
             </div>
         </div>
         <div class="flexGrow">
