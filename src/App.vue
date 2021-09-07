@@ -205,7 +205,12 @@
         align-items: center;
 
     }
-
+    .flexAutoEnd{
+        align-self: flex-end;
+    }
+    .flexAutoCenter{
+      align-self: center;
+    }
     .d-inline {
         display: inline-block;
     }
@@ -520,8 +525,8 @@
     }
 
     .ph-0 {
-        padding-left: 0;
-        padding-right: 0;
+        padding-left: 0!important;
+        padding-right: 0!important;
     }
 
     .ph-1 {
@@ -598,8 +603,8 @@
     }
 
     .pv-0 {
-        padding-bottom: 0;
-        padding-top: 0;
+        padding-bottom: 0!important;
+        padding-top: 0!important;
     }
 
     .pv-1 {
@@ -687,6 +692,12 @@
         text-align: center;
         vertical-align: middle;
     }
+
+
+    .rightScroll{
+      overflow-y: scroll;
+    }
+
 
     /*-----------------------------------*/
     .messages {
