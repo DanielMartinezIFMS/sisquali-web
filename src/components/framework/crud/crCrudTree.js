@@ -145,7 +145,7 @@ export default Vue.component('crCrudTree', {
         },
         relacionarNohs: function(){
             let raiz = document.getElementsByClassName('crudTreeRoot')[0].children[1].children[0];
-            let result = [];
+           // let result = [];
             this.buscaRecusiva = (e)=>{
 
               if(e.nextSibling){
