@@ -1,8 +1,6 @@
 <template>
     <cr-crud collection="lista" entity="cadastro">
-        <cr-crud-tree :collection="lista">
-            <span>ops</span>
-        </cr-crud-tree>
+        <cr-crud-tree :collection="lista"/>
     </cr-crud>
 </template>
 
