@@ -5,6 +5,7 @@
            @input="input" @blur="show=false"
            @keydown.up.stop.prevent="key_up"
            @keydown.down.stop.prevent="key_down" @keyup.enter="select">
+    <small v-if="message" class="inputErrorMessage"><font-awesome-icon icon="exclamation-triangle"/>{{message}}</small>
     <select ref="_ac" v-model="preselect" size="10" @click="optionSelect"
             :class="{remaining:true, inputAutocompleteOptions:true, hide:!this.show}">
       <option v-for="item in lista" v-bind:value="item" v-bind:key="item[config.indexField]">{{print(item)}}</option>
@@ -85,6 +86,18 @@
           return item.nome;
         }
         return item;
+      },
+      focus: function () {
+        let self = this;
+        this.$nextTick(() => {
+          self.$refs.input.focus();
+        });
+      },
+      error: function (message) {
+        this.message = message;
+      },
+      ok: function () {
+        this.message = undefined;
       }
     },
     data: () => {
@@ -93,7 +106,8 @@
         show: false,
         lista: [],
         texto: '',
-        preselect: undefined
+        preselect: undefined,
+        message: undefined,
       };
     }
   };

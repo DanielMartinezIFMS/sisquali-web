@@ -249,7 +249,7 @@ class CrValidator {
       }
     }
   }
-  _vBetwin (i, label, args, message) {}
+  //_vBetwin (i, label, args, message) {}
   _vEqual (i, label, fn, message) {
     let m = ((message) || '{label} deve ser igual a "{arg}"!').replace('{label}', label).replace('{arg}', fn());
     if (i.value !== fn()) {
