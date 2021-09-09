@@ -16,10 +16,22 @@
       <cr-bt primary @click="()=>this.filtrar()" class="mt-6">Filtrar</cr-bt>
     </cr-panel>
     <cr-table :config="listaConfig" :collection="lista" class="mh-2"/>
+      <cr-window title="Registro de rejeição" width="80%" ref="wRejeicao">
+          <cr-panel boxShadow labelTop>
+              <input-area label="Justificativa" v-model="justificativa" rows="5"/>
+              <div class="flexRow">
+                  <div class="flexGrow"/>
+                  <cr-bt error class="flexEnd pr-1" @click="()=>rejeitar()">Rejeitar</cr-bt>
+              </div>
+          </cr-panel>
+      </cr-window>
   </cr-panel>
 </template>
 
 <script>
+//justificativa obrigatoria
+//não clicar em rejeitar sem justificativa
+//botoes autorizar/rejeitar devem sumir apos aprovação
 import ctt from "./Constants";
 import CrPanel from "../framework/form/crPanel";
 import inputCombo from "../framework/form/inputCombo";
@@ -28,10 +40,12 @@ import inputAuto from "../framework/form/advanced/inputAuto";
 import InputDomain from "../framework/form/advanced/inputDomain";
 import CrBt from "../framework/common/crButton";
 import CrTable from "../framework/common/crTable";
+import CrWindow from "../framework/common/crWindow";
+import inputArea from "../framework/form/inputArea";
 
 export default {
   name: "PlanoOperacionalAprov",
-  components: {CrTable, CrBt, InputDomain, CrPanel, inputCombo, inputDate, inputAuto},
+  components: {inputArea, CrWindow, CrTable, CrBt, InputDomain, CrPanel, inputCombo, inputDate, inputAuto},
 
   data: function () {
     let self = this;
@@ -42,6 +56,7 @@ export default {
       ensaios: [],
       laboratorios: [],
 
+        justificativa: undefined,
       projeto: undefined,
       laboratorio: undefined,
       ensaio: undefined,
@@ -66,7 +81,7 @@ export default {
             },
             {
               icon: 'times-circle', title: 'Rejeitar plano operacional', click: function (planoOperacional) {
-                self.rejeitar(planoOperacional);
+                self.iniciarRejeicao(planoOperacional);
               }
             },
           ]
@@ -103,9 +118,20 @@ export default {
     aprovar: function (planoOperacional) {
       console.log(planoOperacional);
     },
-    rejeitar: function (planoOperacional) {
-      console.log(planoOperacional);
+    iniciarRejeicao: function (planoOperacional) {
+        this.planoOperacional=planoOperacional;
+      this.$refs.wRejeicao.open();
     },
+     rejeitar: async function (){
+       this.planoOperacional.motivoRejeicao=this.justificativa;
+     //  this.planoOperacional.usuarioRejeicao=this.security.user
+         this.planoOperacional.dhRegeicao=new Date();
+         this.planoOperacional.situacao = {id:7, nome:'REJEITADO'};
+         let planoAlterado = await this.$put(ctt.rest + '/planoOperacinal',this.planoOperacional);
+         this.lista[this.lista.indexOf(this.planoOperacional)] = planoAlterado;
+         this.$refs.wRejeicao.close();
+         this.$root.mens.success('Atenção','Plano operacional rejeitado com sucesso!');
+     },
   },
   created: async function () {
     this.laboratorios = await this.$get(ctt.rest + '/laboratorio/listar');
