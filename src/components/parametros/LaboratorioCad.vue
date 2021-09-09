@@ -3,7 +3,7 @@
         <cr-crud-grid :config="gridConf" class="mt-2"/>
         <cr-crud-form>
             <cr-panel columns="2" boxShadow labelTop>
-                <input-longtext label="Nome*" v-model="cadastro.nome"/>
+                <input-longtext label="Nome*" v-model="cadastro.nome" ref="nome"/>
                 <input-combo label="Unidade*" :collection="unidades" v-model="cadastro.unidade"/>
                 <cr-panel>
                     <input-integer label="Prazo de confirmação para contratação de cliente externo (dias)"
@@ -14,7 +14,7 @@
                                    v-model="cadastro.clExtPrzRetAmos" min="0"/>
                 </cr-panel>
                 <cr-panel columns="7" box noPadding>
-                    <input-auto colspan="6" label="Usuário Supervisor" v-model="novo" :config="usuarioConf"/>
+                    <input-auto ref="supervisor" colspan="6" label="Usuário Supervisor" v-model="novo" :config="usuarioConf"/>
                     <cr-bt class="mt-6" primary icon="plus" @click="()=>adicionar()">Inserir</cr-bt>
                     <cr-table class="m-2" colspan="7" :config="superConf" :collection="cadastro.supervisores"/>
                 </cr-panel>
@@ -36,6 +36,7 @@ import ctt from '../parametros/Constants';
 import InputAuto from "../framework/form/advanced/inputAuto";
 import CrBt from "../framework/common/crButton";
 import CrTable from "../framework/common/crTable";
+import {CrValidator, CrREQUIRED} from "../framework/CrValidator";
 
 
 export default {
@@ -56,6 +57,19 @@ export default {
             },
             crudConf: {
                 url: ctt.rest + '/laboratorio',
+                onNew: function (entity){
+                    entity.supervisores=[];
+                },
+                onValidate: function (){
+                    let v=new CrValidator([{ref: 'nome', val: [CrREQUIRED]}]);
+                    self.$refs.supervisor.ok();
+                    let ret = v.validate(self.$refs);
+                    if (!self.cadastro.supervisores || self.cadastro.supervisores.length===0) {
+                        ret = false;
+                        self.$refs.supervisor.error('Ao menos um supervisor deve ser informado!')
+                    }
+                    return ret;
+                },
             },
             gridConf: {
                 fields: 'Nome|100=>nome,Unidade|100=>unidade.nome'
