@@ -42,7 +42,7 @@ export default Vue.component('inputInteger', {
       e = createElement('small', {class: 'inputErrorMessage'}, [i, this.message]);
     }
     return createElement('div', {class: 'inputGroup'}, [
-      createElement('label', propLabel, [self.$attrs.label + ': ']),
+      createElement('label', propLabel, [self.label + ': ']),
       createElement('input', {
         domProps: propInput,
         style: styleInput,
@@ -68,7 +68,8 @@ export default Vue.component('inputInteger', {
   props: ['value', 'width', 'min', 'max', 'step'],
   data: function () {
     return {
-      message: undefined
+      message: undefined,
+      label: this.$attrs.label
     };
   },
   methods: {

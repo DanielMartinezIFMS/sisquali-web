@@ -29,7 +29,7 @@ export default Vue.component('inputCombo', {
       e = createElement('small', {class: 'inputErrorMessage'}, [i, this.message]);
     }
     return createElement('div', {class: 'inputGroup'}, [
-      createElement('label', propLabel, [self.$attrs.label + ': ']),
+      createElement('label', propLabel, [this.label + ': ']),
       createElement('select', {
         domProps: propInput,
         class: ['inputSelect', 'remaining'],
@@ -58,7 +58,8 @@ export default Vue.component('inputCombo', {
   data: function () {
     return {
       displayField:'nome',
-      message: undefined
+      message: undefined,
+      label: this.$attrs.label
     };
   },
   methods: {

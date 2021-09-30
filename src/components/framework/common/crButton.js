@@ -54,7 +54,8 @@ export default Vue.component('crBt', {
         class: clazz,
         style: style,
         domProps: {
-          type: 'button'
+          type: 'button',
+          disabled: this.disabled
         },
         on: {
           click: function (event) {
@@ -68,5 +69,5 @@ export default Vue.component('crBt', {
         }
       }, a)]);
     },
-    props: ['iconStyle','pass','width', 'height', 'circle', 'error', 'success', 'warning', 'info', 'primary', 'secondary', 'icon', 'iconRight', 'iconTop', 'wAuto']
+    props: ['iconStyle','disabled','pass','width', 'height', 'circle', 'error', 'success', 'warning', 'info', 'primary', 'secondary', 'icon', 'iconRight', 'iconTop', 'wAuto']
 });

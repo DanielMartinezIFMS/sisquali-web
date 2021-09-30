@@ -270,6 +270,9 @@
         if (crud.getConf().onNew) {
           crud.getConf().onNew(crud.$parent[crud.$props.entity]);
         }
+        if(crud.validator) {
+          crud.validator.clear(crud.$parent.$refs);
+        }
         form.show(true);
         this.show = false;
         crud.backup = null;
@@ -285,6 +288,9 @@
         crud.$parent[crud.$props.entity] = item;
         crud.backup = JSON.parse(JSON.stringify(item));
         crud.index = index;
+        if(crud.validator) {
+          crud.validator.clear(crud.$parent.$refs);
+        }
         form.show(true);
         if (filter) {
           filter.show(false);

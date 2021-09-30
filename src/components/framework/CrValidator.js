@@ -1,291 +1,453 @@
 /* eslint-disable no-multi-spaces */
-const CrFNVALIDATOR = 0;
+/**
+ * Validator para personalização.
+ * A função fornecida será executada durante o processo de validação e receberá como parametros:<br/>
+ *  entity = entidade editada definida na tag "crud" propriedade "entity"<br/>
+ *  ref = string com a referencia para o input ou title<br/>
+ * @param fn  function(entity,ref):Boolean
+ * @returns {validator: number, fn:fn}
+ */
+const CrFnVALIDATOR = (fn) => {
+    return {validator: _CrFnVALIDATOR, fn: fn};
+};
+const CrREQUIRED = (message) => {
+    return {validator: _CrREQUIRED, message: message};
+};
+const CrMAX = (maxValue, message) => {
+    return {validator: _CrMAX, maxValue: maxValue, message: message};
+};
+const CrMIN = (minValue, message) => {
+    return {validator: _CrMIN, minValue: minValue, message: message};
+};
+const CrMaxLENGTH = (maxLength, message) => {
+    return {validator: _CrMaxLENGTH, maxLength: maxLength, message: message};
+};
+const CrMinLENGTH = (minLength, message) => {
+    return {validator: _CrMinLENGTH, minLength: minLength, message: message};
+};
+const CrPAST = (maxValue, message) => {
+    return {validator: _CrPAST, maxValue: maxValue, message: message};
+};
+const CrFUTURE = (minValue, message) => {
+    return {validator: _CrFUTURE, minValue: minValue, message: message};
+};
+const CrBETWIN = (minValue, maxValue, message) => {
+    return {validator: _CrBETWIN, minValue: minValue, maxValue: maxValue, message: message};
+};
+const CrEQUAL = (value, message) => {
+    return {validator: _CrEQUAL, value: value, message: message};
+};
+const CrNotEQUAL = (value, message) => {
+    return {validator: _CrNotEQUAL, value: value, message: message};
+};
 
-const CrREQUIRED = 1;
+const _CrFnVALIDATOR = 0;
+const _CrREQUIRED = 1;
+const _CrMAX = 2;
+const _CrMIN = 3;
+const _CrMaxLENGTH = 4;
+const _CrMinLENGTH = 5;
+const _CrPAST = 6;
+const _CrFUTURE = 7;
+const _CrBETWIN = 8;
+const _CrEQUAL = 9;
+const _CrNotEQUAL = 10;
 
-const CrMAX = 2;
-const CrMIN = 3;
-const CrLENGHT = 4;
-const CrMinLENGHT = 5;
-
-const CrPAST = 6;
-const CrFUTURE = 7;
-
-const CrBETWIN = 8;
-const CrEQUAL = 9;
-const CrNOTEQUAL = 10;
 
 /**
  * Serviço de validação de dados.
  *
  * Sintaxe:
  *
- * CONF:array = [ INPUT_VALIDATION, INPUT_VALIDATION ...]
+ * CONF:Object = {'Ref1':INPUT_VALIDATION_LIST,'ref2':INPUT_VALIDATION_LIST ...}
  *
- * INPUT_VALIDATION:object = {ref: <referencia ao input>,
- *                     val: [<VALIDATOR_LIST>]}
+ * VALIDATOR_LIST: VALIDATOR | array(VALIDATOR,VALIDATOR...)
  *
- * VALIDATOR_LIST:array|string = < const validator > | [VALIDATOR,VALIDATOR...]
+ * VALIDATOR:
+ *     CrREQUIRED([message:string])
+ *     CrMAX(maxValue:string, [message:string])
+ *     CrMIN(minValue:string, [message:string])
+ *     CrMaxLENGTH(maxLength:number, [message:string])
+ *     CrMinLENGTH(minLength:number:number, [message:string])
+ *     CrPAST(dt:strDate|date, [message:string])
+ *     CrFUTURE(dt:strDate|date, [message:string])
+ *     CrBETWIN(ini:number|strRef|date, fin:number|strRef|date,[message:string])
+ *     CrEQUAL(dt:strRef|date|number, [message:string])
+ *     CrNotEQUAL(dt:strRef|date|number, [message:string])
+ *     CrFnVALIDATOR(callBackFn(value):Boolean)
  *
- * VALIDATOR: array = [<const validator>, arg | [<arg, arg ...>],<message>]
+ * Exemplo 1 - automatizado pelo processo de crud:
  *
- * Exemplo:
+ * <cr-crud validator='conf'>...</cr-crud>
  *
- * let conf =
- * [ {ref: 'referencia',
- *    val: [
- *          CrREQUIRED,
- *          [CrMax,10,'O valor não pode ser maior que 10'],
- *          [CrBETWIN,[2,10],'O valor deve estar entre 2 e 10'],
- *         ]
- *   },
- *   {ref: 'referencia2', val: CrREQUIRED}
- * ]
+ * let conf = {
+ *   'referencia':  [ CrREQUIRED(),
+ *                    CrMAX(10,'O valor não pode ser maior que 10'),
+ *                    CrBETWIN(2,10,'O valor deve estar entre 2 e 10'),
+ *                    CrFnVALIDATOR(function(entity){...},'O valorA não pode ser inferior ao valorB')
+ *                  ],
+ *   'referencia2': CrREQUIRED()},
+ *   ...
+ * }
+ * Exemplo 2 - programatico:
+ *
+ * let v = new CrValidator(conf);
+ *
+ * // indica campos requeridos com asterisco - coloque em created
+ * v.initialize(this.$refs)
+ *
+ * // realiza validação
+ * v.validate(this.$refs);
+ *
+ * // apaga as mensagens de erro - execute depois de recarregar os dados dos inputs
+ * v.clear(this.$refs);
  */
 class CrValidator {
-  constructor (conf) {
-    this.conf = conf;
-    this.focus = undefined;
-  }
+    constructor(conf) {
+        this.conf = conf;
+        this.focus = undefined;
+        this.hasError = undefined;
+    }
 
-  /**
-   * Realiza a validação conforme argumento "conf".
-   */
-  validate (refs) {
-    this.focus = undefined;
-    this.hasError = false;
-    this.conf.map(i => {
-      if (typeof i.val === 'number') {
-        this._validate(refs[i.ref], i.ref, [i.val]);
-      } else if (typeof i.val === 'object') {
-        this._validate(refs[i.ref], i.ref, i.val);
-      }
-    });
-    if (this.focus) {
-      this.focus.focus();
-    }
-    return !this.hasError;
-  }
+    /**
+     * Realiza a validação conforme argumento "conf".
+     */
+    validate(refs, scope) {
+        this.focus = undefined;
+        this.hasError = false;
+        let objConf = undefined;
+        let cps = Object.keys(refs)
+        if (typeof this.conf === 'object') {
+            for (const cp in this.conf) {
+                let list = this.conf[cp];
+                let inp = refs[cp];
+                if (inp) {
+                    if (Array.isArray(list)) {
+                        for (let i = 0; i < list.length; i++) {
+                            objConf = list[i];
+                            this._validate(cp, inp, objConf, refs, cps, scope);
+                        }
+                    } else {
+                        objConf = list;
+                        this._validate(cp, inp, objConf, refs, cps, scope);
+                    }
+                }
+            }
 
-  _validate (i, r, v) {
-    let args, message, label;
-    label = i.$attrs['label'] || r;
-    v.map(vl => {
-      if (typeof vl !== 'number') {
-        args = (vl.length >= 2) ? vl[1] : undefined;
-        message = (vl.length === 3) ? vl[2] : undefined;
-        this.__validate(vl[0], i, label, args, message);
-      } else {
-        this.__validate(vl, i, label, args, message);
-      }
-    });
-  }
+            return !this.hasError;
+        }
+    }
 
-  __validate (tp, i, label, args, message) {
-    switch (tp) {
-      case CrREQUIRED:
-        this._vRequired(i, label, args, message);
-        break;
-      case CrMAX:
-        this._vMax(i, label, args, message);
-        break;
-      case CrMIN:
-        this._vMin(i, label, args, message);
-        break;
-      case CrLENGHT:
-        this._vLenght(i, label, args, message);
-        break;
-      case CrMinLENGHT:
-        this._vMinLenght(i, label, args, message);
-        break;
-      case CrPAST:
-        this._vPast(i, label, args, message);
-        break;
-      case CrFUTURE:
-        this._vFuture(i, label, args, message);
-        break;
-      case CrBETWIN:
-        this._vBetwin(i, label, args, message);
-        break;
-      case CrEQUAL:
-        this._vEqual(i, label, args, message);
-        break;
-      case CrNOTEQUAL:
-        this._vNotEqual(i, label, args, message);
-        break;
-    }
-  }
-  _vRequired (i, label, args, message) {
-    let m = ((message) || '{label} deve ser informado!').replace('{label}', label);
-    if (i.value === undefined || i.value === '') {
-      this.hasError = true;
-      if (i.error) {
-        i.error(m);
-        if (this.focus === undefined) {
-          this.focus = i;
+    _validArgs(vl, cps, refs) {
+        if (typeof vl === 'string') {
+            let i = refs.indexOf(vl);
+            if (i >= 0) {
+                return refs[i].value
+            }
         }
-      } else {
-        i.$root.mens.error(m);
-      }
-    } else {
-      if (i.error) {
-        i.error(undefined);
-      }
+        return vl;
     }
-  }
-  _vMax (i, label, args, message) {
-    let arg = (typeof args === 'object') ? args[0] : args;
-    let m = ((message) || '{label} deve ser no máximo {arg}!').replace('{label}', label).replace('{arg}', arg);
-    if (i.value > arg) {
-      this.hasError = true;
-      if (i.error) {
-        i.error(m);
-        if (this.focus === undefined) {
-          this.focus = i;
+
+    _validate(cp, i, conf, refs, cps, scope) {
+        let label = i.label || cp;
+        let value = undefined;
+        let valueB = undefined;
+        if (conf.value) value = this._validArgs(conf.value, cps, refs)
+        else if (conf.minValue) value = this._validArgs(conf.minValue, cps, refs)
+        else if (conf.minLength) value = this._validArgs(conf.minLength, cps, refs)
+
+        if (conf.maxValue) valueB = this._validArgs(conf.maxValue, cps, refs)
+        else if (conf.maxLength) valueB = this._validArgs(conf.maxLength, cps, refs)
+        let crud = undefined;
+        let entity = undefined;
+        let e = undefined;
+        switch (conf.validator) {
+            case _CrFnVALIDATOR:
+                crud = this._getCrud(scope);
+                entity = scope.$parent[crud.entity];
+                e = this._vFunction(i, label, conf.fn, entity, cp);
+                if (!e) this.hasError = true;
+                break;
+            case _CrREQUIRED:
+                this._vRequired(i, label, conf.message);
+                break;
+            case _CrMAX:
+                this._vMax(i, label, value, conf.message);
+                break;
+            case _CrMIN:
+                this._vMin(i, label, value, conf.message);
+                break;
+            case _CrMaxLENGTH:
+                this._vMaxLength(i, label, valueB, conf.message);
+                break;
+            case _CrMinLENGTH:
+                this._vMinLength(i, label, value, conf.message);
+                break;
+            case _CrPAST:
+                this._vPast(i, label, valueB, conf.message);
+                break;
+            case _CrFUTURE:
+                this._vFuture(i, label, value, conf.message);
+                break;
+            case _CrBETWIN:
+                this._vBetwin(i, label, value, valueB, conf.message);
+                break;
+            case _CrEQUAL:
+                this._vEqual(i, label, value, conf.message);
+                break;
+            case _CrNotEQUAL:
+                this._vNotEqual(i, label, value, conf.message);
+                break;
         }
-      } else {
-        i.$root.mens.error(m);
-      }
-    } else {
-      if (i.error) {
-        i.error(undefined);
-      }
+        return !this.hasError;
     }
-  }
-  _vMin (i, label, args, message) {
-    let arg = (typeof args === 'object') ? args[0] : args;
-    let m = ((message) || '{label} deve ser no minimo {arg}!').replace('{label}', label).replace('{arg}', arg);
-    if (i.value < arg) {
-      this.hasError = true;
-      if (i.error) {
-        i.error(m);
-        if (this.focus === undefined) {
-          this.focus = i;
+
+    _getCrud(scope) {
+        let c = scope;
+        while (c && c.$options._componentTag !== 'cr-crud') {
+            c = c.$parent;
         }
-      } else {
-        i.$root.mens.error(m);
-      }
-    } else {
-      if (i.error) {
-        i.error(undefined);
-      }
+        return c;
     }
-  }
-  _vLenght (i, label, args, message) {
-    let arg = (typeof args === 'object') ? args[0] : args;
-    let m = ((message) || '{label} deve ter até {arg} letras!').replace('{label}', label).replace('{arg}', arg);
-    if (i.value.length > arg) {
-      this.hasError = true;
-      if (i.error) {
-        i.error(m);
-        if (this.focus === undefined) {
-          this.focus = i;
+
+    initialize(refs) {
+        for (const cp in this.conf) {
+            let list = this.conf[cp];
+            let inp = refs[cp];
+            if (inp) {
+                if (Array.isArray(list)) {
+                    for (let i = 0; i < list.length; i++) {
+                        let conf = list[i];
+                        if (conf.validator && list.validator === _CrREQUIRED) {
+                            inp.label = inp.label + '*';
+                            break;
+                        }
+                    }
+                } else {
+                    if (list.validator && list.validator === _CrREQUIRED) {
+                        inp.label = inp.label + '*';
+                    }
+                }
+            }
         }
-      } else {
-        i.$root.mens.error(m);
-      }
-    } else {
-      if (i.error) {
-        i.error(undefined);
-      }
     }
-  }
-  _vMinLenght (i, label, args, message) {
-    let arg = (typeof args === 'object') ? args[0] : args;
-    let m = ((message) || '{label} deve ter no mínimo {arg} letras!').replace('{label}', label).replace('{arg}', arg);
-    if (i.value === undefined || i.value.length < arg) {
-      this.hasError = true;
-      if (i.error) {
-        i.error(m);
-        if (this.focus === undefined) {
-          this.focus = i;
+
+    clear(refs) {
+        for (const key in refs) {
+            let i = refs[key];
+            i.ok();
         }
-      } else {
-        i.$root.mens.error(m);
-      }
-    } else {
-      if (i.error) {
-        i.error(undefined);
-      }
     }
-  }
-  _vPast (i, label, args, message) {
-    let arg = (typeof args === 'object') ? args[0] : args;
-    let dt = i.$crUtils.mask('data', arg);
-    let m = ((message) || '{label} deve ser anterior a {dt}!').replace('{label}', label).replace('{dt}', dt);
-    if (i.value > arg) {
-      this.hasError = true;
-      if (i.error) {
-        i.error(m);
-        if (this.focus === undefined) {
-          this.focus = i;
+
+    _vFunction(i, label, fn, entity, ref) {
+        return (fn && fn(entity,ref));
+    }
+
+    _vRequired(i, label, message) {
+        let m = ((message) || 'O campo "{label}" deve ser informado!').replace('{label}', label);
+        if (i.value === undefined || i.value === '') {
+            this.hasError = true;
+            if (i.error) {
+                i.error(m);
+                if (this.focus === undefined) {
+                    this.focus = i;
+                }
+            } else {
+                i.$root.mens.error(m);
+            }
+        } else {
+            if (i.error) {
+                i.error(undefined);
+            }
         }
-      } else {
-        i.$root.mens.error(m);
-      }
-    } else {
-      if (i.error) {
-        i.error(undefined);
-      }
     }
-  }
-  _vFuture (i, label, args, message) {
-    let arg = (typeof args === 'object') ? args[0] : args;
-    let dt = i.$crUtils.mask('data', arg);
-    let m = ((message) || '{label} deve ser posterior a {dt}!').replace('{label}', label).replace('{dt}', dt);
-    if (i.value < arg) {
-      this.hasError = true;
-      if (i.error) {
-        i.error(m);
-        if (this.focus === undefined) {
-          this.focus = i;
+
+    _vMax(i, label, value, message) {
+        let m = ((message) || '{label} deve ser no máximo {arg}!').replace('{label}', label).replace('{arg}', value);
+        if (i.value > value) {
+            this.hasError = true;
+            if (i.error) {
+                i.error(m);
+                if (this.focus === undefined) {
+                    this.focus = i;
+                }
+            } else {
+                i.$root.mens.error(m);
+            }
+        } else {
+            if (i.error) {
+                i.error(undefined);
+            }
         }
-      } else {
-        i.$root.mens.error(m);
-      }
-    } else {
-      if (i.error) {
-        i.error(undefined);
-      }
     }
-  }
-  //_vBetwin (i, label, args, message) {}
-  _vEqual (i, label, fn, message) {
-    let m = ((message) || '{label} deve ser igual a "{arg}"!').replace('{label}', label).replace('{arg}', fn());
-    if (i.value !== fn()) {
-      this.hasError = true;
-      if (i.error) {
-        i.error(m);
-        if (this.focus === undefined) {
-          this.focus = i;
+
+    _vMin(i, label, value, message) {
+        let m = ((message) || '{label} deve ser no minimo {arg}!').replace('{label}', label).replace('{arg}', value);
+        if (i.value < value) {
+            this.hasError = true;
+            if (i.error) {
+                i.error(m);
+                if (this.focus === undefined) {
+                    this.focus = i;
+                }
+            } else {
+                i.$root.mens.error(m);
+            }
+        } else {
+            if (i.error) {
+                i.error(undefined);
+            }
         }
-      } else {
-        i.$root.mens.error(m);
-      }
-    } else {
-      if (i.error) {
-        i.error(undefined);
-      }
     }
-  }
-  _vNotEqual (i, label, args, message) {
-    let arg = (typeof args === 'object') ? args[0] : args;
-    let m = ((message) || '{label} deve ser diferente de "{arg}"!').replace('{label}', label).replace('{arg}', arg);
-    if (i.value === arg) {
-      this.hasError = true;
-      if (i.error) {
-        i.error(m);
-        if (this.focus === undefined) {
-          this.focus = i;
+
+    _vMaxLength(i, label, value, message) {
+        let m = ((message) || '{label} deve ter até {arg} letras!').replace('{label}', label).replace('{arg}', value);
+        if (i.value.length > value) {
+            this.hasError = true;
+            if (i.error) {
+                i.error(m);
+                if (this.focus === undefined) {
+                    this.focus = i;
+                }
+            } else {
+                i.$root.mens.error(m);
+            }
+        } else {
+            if (i.error) {
+                i.error(undefined);
+            }
         }
-      } else {
-        i.$root.mens.error(m);
-      }
-    } else {
-      if (i.error) {
-        i.error(undefined);
-      }
     }
-  }
+
+    _vMinLength(i, label, value, message) {
+        let m = ((message) || '"{label}" deve ter no mínimo {value} letras!').replace('{label}', label).replace('{value}', value);
+        if (i.value === undefined || i.value.length < value) {
+            this.hasError = true;
+            if (i.error) {
+                i.error(m);
+                if (this.focus === undefined) {
+                    this.focus = i;
+                }
+            } else {
+                i.$root.mens.error(m);
+            }
+        } else {
+            if (i.error) {
+                i.error(undefined);
+            }
+        }
+    }
+
+    _vPast(i, label, value, message) {
+        let dt = i.$crUtils.mask('data', value);
+        let m = ((message) || '"{label}" deve ser anterior a {dt}!').replace('{label}', label).replace('{dt}', dt);
+        if (i.value > value) {
+            this.hasError = true;
+            if (i.error) {
+                i.error(m);
+                if (this.focus === undefined) {
+                    this.focus = i;
+                }
+            } else {
+                i.$root.mens.error(m);
+            }
+        } else {
+            if (i.error) {
+                i.error(undefined);
+            }
+        }
+    }
+
+    _vFuture(i, label, value, message) {
+        let dt = i.$crUtils.mask('data', value);
+        let m = ((message) || '{label} deve ser posterior a {dt}!').replace('{label}', label).replace('{dt}', dt);
+        if (i.value < value) {
+            this.hasError = true;
+            if (i.error) {
+                i.error(m);
+                if (this.focus === undefined) {
+                    this.focus = i;
+                }
+            } else {
+                i.$root.mens.error(m);
+            }
+        } else {
+            if (i.error) {
+                i.error(undefined);
+            }
+        }
+    }
+
+    _vBetwin(i, label, arga, argb, message) {
+        let m = ((message) || '"{label}" Deve ser maior ou igual a "{arga}" e menor ou igual a "{argb}"!').replace('{label}', label).replace('{arga}', arga).replace('{argb}', argb);
+        if (i.value < arga || i.value > argb) {
+            this.hasError = true;
+            if (i.error) {
+                i.error(m);
+                if (this.focus === undefined) {
+                    this.focus = i;
+                }
+            } else {
+                i.$root.mens.error(m);
+            }
+        } else {
+            if (i.error) {
+                i.error(undefined);
+            }
+        }
+
+    }
+
+    _vEqual(i, label, value, message) {
+        let m = ((message) || '{label} deve ser igual a "{arg}"!').replace('{label}', label).replace('{arg}', value);
+        if (i.value !== value) {
+            this.hasError = true;
+            if (i.error) {
+                i.error(m);
+                if (this.focus === undefined) {
+                    this.focus = i;
+                }
+            } else {
+                i.$root.mens.error(m);
+            }
+        } else {
+            if (i.error) {
+                i.error(undefined);
+            }
+        }
+    }
+
+    _vNotEqual(i, label, value, message) {
+        let m = ((message) || '{label} deve ser diferente de "{arg}"!').replace('{label}', label).replace('{arg}', value);
+        if (i.value === value) {
+            this.hasError = true;
+            if (i.error) {
+                i.error(m);
+                if (this.focus === undefined) {
+                    this.focus = i;
+                }
+            } else {
+                i.$root.mens.error(m);
+            }
+        } else {
+            if (i.error) {
+                i.error(undefined);
+            }
+        }
+    }
 }
-export {CrValidator, CrFNVALIDATOR, CrREQUIRED, CrMAX, CrMIN, CrLENGHT, CrMinLENGHT, CrPAST, CrFUTURE, CrBETWIN, CrEQUAL, CrNOTEQUAL};
+
+export {
+    CrValidator,
+    CrFnVALIDATOR,
+    CrREQUIRED,
+    CrMAX,
+    CrMIN,
+    CrMaxLENGTH,
+    CrMinLENGTH,
+    CrPAST,
+    CrFUTURE,
+    CrBETWIN,
+    CrEQUAL,
+    CrNotEQUAL
+};

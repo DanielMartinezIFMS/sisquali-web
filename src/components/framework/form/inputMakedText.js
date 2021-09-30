@@ -19,7 +19,7 @@ export default Vue.component('inputMaskedText', {
       e = createElement('small', {class: 'inputErrorMessage'}, [i, this.message]);
     }
     return createElement('div', {class: 'inputGroup'}, [
-      createElement('label', propLabel, [self.$attrs.label + ': ']),
+      createElement('label', propLabel, [this.label + ': ']),
       createElement('input', {
         domProps: {
           value: self.value
@@ -40,7 +40,8 @@ export default Vue.component('inputMaskedText', {
   props: ['value', 'mask'],
   data: function () {
     return {
-      message: undefined
+      message: undefined,
+      label: this.$attrs.label
     };
   },
   methods: {

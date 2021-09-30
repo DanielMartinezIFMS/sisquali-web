@@ -34,7 +34,7 @@ export default Vue.component('inputFractional', {
       e = createElement('small', {class: 'inputErrorMessage'}, [i, this.message]);
     }
     return createElement('div', {class: 'inputGroup'}, [
-      createElement('label', propLabel, [self.$attrs.label + ': ']),
+      createElement('label', propLabel, [this.label + ': ']),
       createElement('input', {
         domProps: propInput,
         ref: 'input',
@@ -66,7 +66,8 @@ export default Vue.component('inputFractional', {
   props: ['value'],
   data: function () {
     return {
-      message: undefined
+      message: undefined,
+      label: this.$attrs.label
     };
   },
   methods: {

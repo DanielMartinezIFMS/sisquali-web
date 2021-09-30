@@ -24,7 +24,7 @@ export default Vue.component('inputDate', {
       e = createElement('small', {class: 'inputErrorMessage'}, [i, this.message]);
     }
     return createElement('div', {class: 'inputGroup'}, [
-      createElement('label', propLabel, [self.$attrs.label + ': ']),
+      createElement('label', propLabel, [this.label + ': ']),
       createElement('input', {
         class: 'inputDate',
         domProps: propInput,
@@ -42,7 +42,8 @@ export default Vue.component('inputDate', {
   props: ['value'],
   data: function () {
     return {
-      message: undefined
+      message: undefined,
+      label: this.$attrs.label
     };
   },
   methods: {

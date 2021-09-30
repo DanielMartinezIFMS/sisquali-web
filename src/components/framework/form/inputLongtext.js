@@ -18,7 +18,7 @@ export default Vue.component('inputLongtext', {
       e = createElement('small', {class: 'inputErrorMessage'}, [i, this.message]);
     }
     return createElement('div', {class: 'inputGroup'}, [
-      createElement('label', propLabel, [self.$attrs.label + ': ']),
+      createElement('label', propLabel, [this.label + ': ']),
       createElement('input', {
         class: 'remaining',
         ref: 'input',
@@ -39,7 +39,8 @@ export default Vue.component('inputLongtext', {
   data: function () {
     return {
       input: undefined,
-      message: undefined
+      message: undefined,
+      label: this.$attrs.label
     };
   },
   methods: {

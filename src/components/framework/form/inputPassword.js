@@ -17,7 +17,7 @@ export default Vue.component('inputPassword', {
       e = createElement('small', {class: 'inputErrorMessage'}, [i, this.message]);
     }
     return createElement('div', {class: {'inputGroup': true}}, [
-      createElement('label', propLabel, [self.$attrs.label + ': ']),
+      createElement('label', propLabel, [this.label + ': ']),
       createElement('input', {
         domProps: {
           type: 'password',
@@ -39,7 +39,8 @@ export default Vue.component('inputPassword', {
   props: ['value'],
   data: function () {
     return {
-      message: undefined
+      message: undefined,
+      label: this.$attrs.label
     };
   },
   methods: {

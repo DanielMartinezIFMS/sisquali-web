@@ -32,7 +32,7 @@ export default Vue.component('inputCurrency', {
     }
 
     return createElement('div', {class: 'inputGroup'}, [
-      createElement('label', propLabel, [self.$attrs.label + ': ']),
+      createElement('label', propLabel, [this.label + ': ']),
       createElement('input', {
         ref: 'currencyInput',
         domProps: propInput,
@@ -135,7 +135,8 @@ export default Vue.component('inputCurrency', {
   },
   data: function () {
     return {
-      message: undefined
+      message: undefined,
+      label: this.$attrs.label
     };
   },
   methods: {
