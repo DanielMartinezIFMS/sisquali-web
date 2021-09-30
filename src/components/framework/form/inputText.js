@@ -26,8 +26,9 @@ export default Vue.component('inputText', {
             let i = createElement('font-awesome-icon', {attrs: {icon: 'exclamation-triangle'}});
             e = createElement('small', {class: 'inputErrorMessage'}, [i, this.message]);
         }
+        let lb = (this.label)?createElement('label', propLabel, [this.label + ': ']):null;
         return createElement('div', {class: 'inputGroup'}, [
-            createElement('label', propLabel, [this.label + ': ']),
+            lb,
             createElement('input', {
                 domProps: propInput,
                 ref: 'input',
