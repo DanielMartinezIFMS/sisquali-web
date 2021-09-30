@@ -1,7 +1,7 @@
 <template>
     <div class="crudGroup">
         <label>
-            <input ref="input" type="radio" :id="trueValue" :value="trueValue"
+            <input :name="name" ref="input" type="radio" :id="trueValue" :value="trueValue"
                    @change="$emit('input', $event.target.value)" :checked="value == trueValue"/>
             {{label}}
         </label>
@@ -21,7 +21,7 @@
      */
     export default {
         name: 'InputRadio',
-        props: ['value', 'label', 'trueValue'],
+        props: ['value', 'label', 'trueValue','name'],
         data: function () {
             return {
                 message: undefined
