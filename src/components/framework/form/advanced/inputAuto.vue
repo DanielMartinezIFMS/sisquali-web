@@ -1,6 +1,6 @@
 <template>
   <div class="inputGroup">
-    <label class="crudLabel" :style="autostyle">{{label}}:</label>
+    <label v-if="label" class="crudLabel" :style="autostyle">{{label}}:</label>
     <input type="search" class="remaining" autocomplete="off" v-model="texto"
            @input="input" @blur="show=false"
            @keydown.up.stop.prevent="key_up"

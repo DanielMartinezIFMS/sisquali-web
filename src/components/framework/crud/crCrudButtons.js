@@ -23,7 +23,8 @@ export default Vue.component('crCrudButtons', {
             class: 'crudButton crudButtonCancel',
             domProps: {
                type: 'button',
-               value: self.value
+               value: self.value,
+               disabled: self.disabled
             },
             on: {
                click: function () {
@@ -46,7 +47,7 @@ export default Vue.component('crCrudButtons', {
          }, 'Excluir')])];
       return createElement('div', {class: 'crudButtonsGroup'}, btns);
    },
-   props: ['value'],
+   props: ['value','disabled'],
    methods: {
       salvar: function () {
          let crud = this.getCrud();

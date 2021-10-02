@@ -78,7 +78,7 @@ const _CrNotEQUAL = 10;
  *
  * Exemplo 1 - automatizado pelo processo de crud:
  *
- * <cr-crud validator='conf'>...</cr-crud>
+ * <cr-crud validatorConf='conf'>...</cr-crud>
  *
  * let conf = {
  *   'referencia':  [ CrREQUIRED(),
