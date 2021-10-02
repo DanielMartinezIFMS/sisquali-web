@@ -18,7 +18,7 @@
     <cr-table :config="listaConfig" :collection="lista" class="mh-2"/>
       <cr-window title="Registro de rejeição" width="80%" ref="wRejeicao">
           <cr-panel boxShadow labelTop>
-              <input-area label="Justificativa" v-model="justificativa" rows="5"/>
+              <input-area ref="justificativa" label="Justificativa" v-model="justificativa" rows="5"/>
               <div class="flexRow">
                   <div class="flexGrow"/>
                   <cr-bt error class="flexEnd pr-1" @click="()=>rejeitar()">Rejeitar</cr-bt>
@@ -29,9 +29,6 @@
 </template>
 
 <script>
-//justificativa obrigatoria
-//não clicar em rejeitar sem justificativa
-//botoes autorizar/rejeitar devem sumir apos aprovação
 import ctt from "./Constants";
 import CrPanel from "../framework/form/crPanel";
 import inputCombo from "../framework/form/inputCombo";
@@ -77,17 +74,30 @@ export default {
             {
               icon: 'check-circle', title: 'Aprovar plano operacional', click: function (planoOperacional) {
                 self.aprovar(planoOperacional);
-              }
+              }, show: function (plano){
+                    return (plano.dhRegeicao===undefined && plano.dhAprovacao===undefined);
+                },
             },
             {
               icon: 'times-circle', title: 'Rejeitar plano operacional', click: function (planoOperacional) {
                 self.iniciarRejeicao(planoOperacional);
-              }
+              }, show: function (plano){
+                    return (plano.dhRegeicao===undefined && plano.dhAprovacao===undefined);
+                },
             },
           ]
         },
         emptyMessage: 'Nenhum plano operacional selecionado!',
-        fields: 'Projeto|50=>projeto.codigo,Solicitante|100=>usuarioCriacao.nome,Laboratório|100=>laboratorio.nome,Ensaio|100=>ensaio.nome,Tipo de Amostra|100=>amostraTipo.descricao,Quantidade|45C=>quantidade,Data da Entrega|60C|mask(DATA)=>dtEntrega,Status|100C=>situacao.nome'
+        fields: 'Projeto|50=>projeto.codigo,Solicitante|100=>usuarioCriacao.nome,Laboratório|100=>laboratorio.nome,Ensaio|100=>ensaio.nome,Tipo de Amostra|100=>amostraTipo.descricao,Quantidade|45C=>quantidade,Data da Entrega|60C|mask(DATA)=>dtEntrega,Status|100C=>situacao.nome',
+          converters: {
+            'situacao.nome':function(situacao,registro){
+                if(registro.motivoRejeicao) {
+                    return '<div title="' + registro.motivoRejeicao + '" >' + situacao + '</div>';
+                }else {
+                    return '<div>' + situacao + '</div>';
+                }
+            }
+          }
       },
     };
   },
@@ -115,14 +125,23 @@ export default {
       }
       this.lista = await this.$get(ctt.rest + '/planoOperacinal/listar?args=' + encodeURI(JSON.stringify(args)));
     },
-    aprovar: function (planoOperacional) {
-      console.log(planoOperacional);
+    aprovar: async function (planoOperacional) {
+        //  this.planoOperacional.usuarioRejeicao=this.security.user
+        planoOperacional.dhAprovacao=new Date();
+        planoOperacional.situacao = {id:6, nome:'APROVADO'};
+        let planoAlterado = await this.$put(ctt.rest + '/planoOperacinal',planoOperacional);
+        this.lista[this.lista.indexOf(planoOperacional)] = planoAlterado;
+        this.$root.mens.success('Atenção','Plano operacional aprovado com sucesso!');
     },
     iniciarRejeicao: function (planoOperacional) {
         this.planoOperacional=planoOperacional;
       this.$refs.wRejeicao.open();
     },
      rejeitar: async function (){
+        if(!this.justificativa){
+            this.$refs.justificativa.error('Uma justificativa deve ser informada!');
+            return;
+        }
        this.planoOperacional.motivoRejeicao=this.justificativa;
      //  this.planoOperacional.usuarioRejeicao=this.security.user
          this.planoOperacional.dhRegeicao=new Date();
