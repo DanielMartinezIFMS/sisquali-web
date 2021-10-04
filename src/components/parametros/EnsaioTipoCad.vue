@@ -10,6 +10,7 @@
             <input-domain ref="tipsvc" label="Tipo de Serviço" cod-group="3" v-model="cadastro.servicoTipo"/>
             <input-domain ref="areasvc" label="Área do Serviço" cod-group="4" v-model="cadastro.servicoArea"/>
             <input-text ref="idAtv" label="ID da Atividade ou Método" v-model="cadastro.codigo"/>
+            <input-file-up label="Procedimento Operacional Padrão - POP (pdf,doc,docx,odt)" v-model="cadastro.popversao.nome" group="documento" accept=".pdf"/>
             <input-integer ref="numRept" label="Número padrão de repetições" min="0" v-model="cadastro.qtdeRepeticao"/>
             <input-integer label="Número de ensaios/dia" min="0" v-model="cadastro.qtdeEnsaioDiario"/>
             <input-integer label="Carência(dias)" min="0" v-model="cadastro.carencia"/>
@@ -17,11 +18,11 @@
             <input-currency label="Custo(R$)" v-model="cadastro.custo"/>
             <span></span>
             <input-check label="A cobrança deverá ser feita por lote de amostras analizadas" colspan="3"
-                         v-model="cadastro.cobrarPorLote"/>
+                         v-model="cadastro.cobrarPorLote" @change="$forceUpdate()"/>
             <span></span><span></span>
-            <input-currency label="Preço por Lote(R$)" v-model="cadastro.precoPorLote"/>
-            <input-currency label="Custo por Lote(R$)" v-model="cadastro.custoPorLote"/>
-            <input-integer label="Numero de amostras/Lote" min="0" v-model="cadastro.qtdeAmostraPorLote"/>
+            <input-currency v-if="cadastro.cobrarPorLote" label="Preço por Lote(R$)" v-model="cadastro.precoPorLote"/>
+            <input-currency v-if="cadastro.cobrarPorLote" label="Custo por Lote(R$)" v-model="cadastro.custoPorLote"/>
+            <input-integer  v-if="cadastro.cobrarPorLote" label="Numero de amostras/Lote" min="0" v-model="cadastro.qtdeAmostraPorLote"/>
             <input-check label="Gerar laudo de todas as amostras individualmente" colspan="3"
                          v-model="cadastro.gerarLaudoIndividual"/>
             <span></span><span></span>
@@ -36,11 +37,11 @@
             <input-group label="Ensaio exige controles diferentes dos normais informados na 'Politica e procedimento para
                                      instalações físicas, condições ambientais e segurança'? ">
               <input-radio v-model="cadastro.controleDiferente" label="Sim" :true-value="true"
-                           name="controleDiferente" @change="$forceUpdate()"/>
+                           name="controleDiferente" @change="atualizarControle()"/>
               <input-radio v-model="cadastro.controleDiferente" label="Não" :true-value="false"
-                           name="controleDiferente" class="ml-3" @change="$forceUpdate()"/>
+                           name="controleDiferente" class="ml-3" @change="atualizarControle()"/>
             </input-group>
-            <cr-panel columns="2" box class="ph-0" v-if="cadastro.controleDiferente===true">
+            <cr-panel columns="2" box class="ph-0" v-if="cadastro.controleDiferente">
               <input-group label="Parâmetro a ser registrado na condição ambiental monitorada">
                 <input-domain v-model="monitoramento.parametroMonitorado" cod-group="5" class="pl-0"/>
                 <input-text v-model="monitoramento.parametroOutro"
@@ -67,22 +68,20 @@
         <cr-tab-sheet title="Responsáveis">
           <cr-panel columns="2" boxShadow>
             <cr-panel box labelTop>
-              <h3>Responsável técnico pelo ensaio</h3>
-              <input-group label="Responsável Técnico" class="pl-0">
-                <input-auto ref="responsavel" remaining v-model="novosup"
+              <input-group label="Responsável Técnico" class="pl-0 pb-0">
+                <input-auto class="pl-0" ref="responsavel" remaining v-model="novosup"
                             :config="usuarioConf"/>
                 <cr-bt class="mt-1" primary icon="plus" @click="()=>adicionarSup()" :desabled="!this.novosup">Inserir</cr-bt>
               </input-group>
-              <cr-table class="m-2" colspan="7" :config="superConf" :collection="cadastro.responsaveisTecnicos"/>
+              <cr-table colspan="7" :config="superConf" :collection="cadastro.responsaveisTecnicos"/>
             </cr-panel>
             <cr-panel box labelTop>
-              <h3>Laboratorista</h3>
-              <input-group label="Laboratorista">
-                <input-auto ref="laboratorista" remaining v-model="novolab"
+              <input-group label="Laboratorista" class="pl-0 pb-0">
+                <input-auto class="pl-0" ref="laboratorista" remaining v-model="novolab"
                             :config="usuarioConf"/>
                 <cr-bt class="mt-1" primary icon="plus" @click="()=>adicionarLab()" :desabled="!this.novolab">Inserir</cr-bt>
               </input-group>
-              <cr-table class="m-2" colspan="7" :config="labConf" :collection="cadastro.laboratoristas"/>
+              <cr-table colspan="7" :config="labConf" :collection="cadastro.laboratoristas"/>
             </cr-panel>
           </cr-panel>
 
@@ -122,26 +121,7 @@ import {CrREQUIRED} from "../framework/CrValidator";
 
 export default {
   name: "EnsaioTipoCad",
-  components: {
-    CrTable,
-    inputAuto,
-    InputRadio,
-    InputCheck,
-    inputInteger,
-    InputDomain,
-    inputCurrency,
-    CrTabSheet,
-    CrTab,
-    CrPanel,
-    CrCrud,
-    CrCrudGrid,
-    CrCrudForm,
-    inputLongtext,
-    inputText,
-    inputGroup,
-    inputFractional,
-    CrBt,
-  },
+  components: {CrTable,inputAuto,InputRadio,InputCheck,inputInteger,InputDomain,inputCurrency,CrTabSheet,CrTab,CrPanel,CrCrud,CrCrudGrid,CrCrudForm,inputLongtext,inputText,inputGroup,inputFractional,CrBt,},
   data: function () {
     let self = this;
     return {
@@ -204,6 +184,9 @@ export default {
     };
   },
   methods: {
+    atualizarControle: function(){
+      this.$forceUpdate();
+    },
     adicionarPm: function () {
       if (!this.cadastro.parametroMonitoramentos) {
         this.cadastro.parametroMonitoramentos = [];

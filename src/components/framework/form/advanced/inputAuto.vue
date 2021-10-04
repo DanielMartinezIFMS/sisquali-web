@@ -1,12 +1,12 @@
 <template>
-  <div class="inputGroup">
+  <div class="inputGroup remaining" @blur="show=false">
     <label v-if="label" class="crudLabel" :style="autostyle">{{label}}:</label>
     <input type="search" class="remaining" autocomplete="off" v-model="texto"
-           @input="input" @blur="show=false"
-           @keydown.up.stop.prevent="key_up"
-           @keydown.down.stop.prevent="key_down" @keyup.enter="select">
+           @input="input($event)"
+           @keydown.up.stop.prevent="key_up($event)"
+           @keydown.down.stop.prevent="key_down($event)" @keyup.enter="select($event)">
     <small v-if="message" class="inputErrorMessage"><font-awesome-icon icon="exclamation-triangle"/>{{message}}</small>
-    <select ref="_ac" v-model="preselect" size="10" @click="optionSelect"
+    <select ref="_ac" v-model="preselect" size="10" @click.prevent.stop="optionSelect()"
             :class="{remaining:true, inputAutocompleteOptions:true, hide:!this.show}">
       <option v-for="item in lista" v-bind:value="item" v-bind:key="item[config.indexField]">{{print(item)}}</option>
     </select>

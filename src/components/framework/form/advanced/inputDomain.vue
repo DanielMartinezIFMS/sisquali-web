@@ -25,7 +25,7 @@ import ctt from '../../../parametros/Constants';
 
 export default {
   name: 'inputDomain',
-  props: ['value', 'label', 'labelLeft', 'codGroup', 'sigla', 'excludedList'],
+  props: ['value','labelLeft', 'codGroup', 'sigla', 'excludedList'],
   created: function () {
     this.carregarOpcoes();
     if (this.$parent.$attrs.labelLeft) {
@@ -50,7 +50,8 @@ export default {
       lista: [],
       dominio: undefined,
       labelStyle: undefined,
-      message: undefined
+      message: undefined,
+      label: this.$attrs.label
     };
   },
   methods: {

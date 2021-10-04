@@ -18,10 +18,11 @@
      */
   export default {
     name: 'InputCheck',
-    props: ['value', 'label','colspan','trueValue'],
+    props: ['value', 'colspan','trueValue'],
     data: function () {
       return {
-        message: undefined
+        message: undefined,
+        label:this.$attrs.label
       };
     },
     methods: {
@@ -37,9 +38,13 @@
                     this.$emit('change', this.trueValue);
                 }
             }else{
-                this.$emit('input', undefined)
+                this.$emit('input', undefined);
                 this.$emit('change', undefined);
             }
+        }else{
+          this.$emit('input', $event.target.checked);
+          this.$emit('change', $event.target.checked);
+
         }
       },
       focus: function () {

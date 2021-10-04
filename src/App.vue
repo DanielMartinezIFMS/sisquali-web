@@ -862,7 +862,9 @@
         flex-wrap: wrap;
         margin-top: 0.3em;
     }
-
+    .labelTop .inputGroupGeneral{
+      flex-grow: 1;
+    }
     .inputSelect {
         min-width: 15ch;
         border: 1px solid silver;
