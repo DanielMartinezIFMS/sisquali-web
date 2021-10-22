@@ -89,10 +89,23 @@
               <cr-table colspan="7" :config="labConf" :collection="cadastro.laboratoristas"/>
             </cr-panel>
           </cr-panel>
-
         </cr-tab-sheet>
         <cr-tab-sheet title="Config.Resgistro"></cr-tab-sheet>
-        <cr-tab-sheet title="Parâmetros"></cr-tab-sheet>
+        <cr-tab-sheet title="Parâmetros">
+          <cr-panel columns="5" boxShadow labelTop>
+                <input-date v-model="novopar.dataInicio" label="Data" ref="datIn"/>
+                <input-fractional v-model="novopar.limiteDeteccao" label="Limite de detecção"/>
+                <input-fractional v-model="novopar.limiteQuantificacao" label="Limite de quantificação"/>
+                <input-fractional v-model="novopar.repetibilidade" label="Repetibilidade"/>
+                <input-fractional v-model="novopar.reprodutibilidade" label="Reprodutibilidade"/>
+                <input-fractional v-model="novopar.taxaRecuperacao" label="Taxa de recuperação"/>
+                <input-fractional v-model="novopar.incertezaMedicao" label="Incerteza de Medição"/>
+                <input-fractional v-model="novopar.desvioPadrao" label="Desvio padrão"/>
+                <input-fractional v-model="novopar.coeficienteVariacao" label="Coeficiente de variação"/>
+            <cr-bt class="mt-5 ml-2" primary wAuto icon="plus" @click="()=>adicionarPar()" :desabled="!this.novopar">Adicionar parâmetros</cr-bt>
+            <cr-table colspan="7"  :config="parEnsConf" :collection="cadastro.parametros"/>
+          </cr-panel>
+        </cr-tab-sheet>
         <cr-tab-sheet title="Amostras">ops</cr-tab-sheet>
       </cr-tab>
       {{ monitoramento.unidadeMedida }}
@@ -157,6 +170,7 @@ export default {
       },
       novolab: undefined,
       novosup: undefined,
+      novopar:{},
       gridConf: {
         fields: 'ID da ATIV. ou MET.|100=>codigo,NOME da ATIVIDADE OU MÉTODO|100=>nome,ABREVIAÇÃO|30=>sigla,TIPO DE SERVIÇO|50=>servicoTipo.nome'
       },
@@ -197,6 +211,16 @@ export default {
           ],
         },
       },
+      parEnsConf: {
+        fields: "Data|50|mask(DATA)=>dataInicio, Limite de Detecção|50=>limiteDeteccao, Limite de Quantificação|30=>limiteQuantificacao, Repetibilidade|30=>repetibilidade, Reprodutibilidade|30=>reprodutibilidade, Taxa de Reprodução|30=>taxaRecuperacao, Incerteza de Medição|30=>incertezaMedicao, Desvio Padrão|30=>desvioPadrao, Coeficiente de Variação|30=>coeficienteVariacao",
+        emptyMessage: 'Nenhum parâmetro informado!',
+        options: {
+          title: 'Opções',
+          width: 30,
+          buttons: [{icon: 'minus', label: '', click: (par) => self.removerPar(par)}
+          ],
+        },
+      },
     };
   },
   methods: {
@@ -219,6 +243,20 @@ export default {
       this.cadastro.responsaveisTecnicos.push(this.novosup);
       this.$forceUpdate();
     },
+    adicionarPar: function () {
+      if(!this.novopar.dataInicio){
+        this.$refs.datIn.error("Informe a data!");
+        return;
+      }
+      this.$refs.datIn.ok();
+      if(!this.cadastro.parametros){
+        this.cadastro.parametros = [];
+        }
+      this.cadastro.parametros.push(this.novopar);
+      this.novopar={};
+      this.$forceUpdate();
+
+    },
     adicionarLab: function () {
       if (!this.cadastro.laboratoristas) {
         this.cadastro.laboratoristas = [];
@@ -231,6 +269,9 @@ export default {
     },
     removerLab: function (lab) {
       this.cadastro.laboratoristas.splice(this.cadastro.laboratoristas.indexOf(lab), 1);
+    },
+    removerPar: function (par) {
+      this.cadastro.parametros.splice(this.cadastro.parametros.indexOf(par), 1);
     },
   }
 }
