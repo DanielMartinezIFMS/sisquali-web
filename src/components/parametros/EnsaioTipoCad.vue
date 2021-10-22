@@ -106,7 +106,19 @@
             <cr-table colspan="7"  :config="parEnsConf" :collection="cadastro.parametros"/>
           </cr-panel>
         </cr-tab-sheet>
-        <cr-tab-sheet title="Amostras">ops</cr-tab-sheet>
+        <cr-tab-sheet title="Amostras">
+            <cr-panel labelTop>
+                <h4 class="ml-3">Selecione os tipos de amostra para os quais este ensaio pode ser solicitado
+                    (subtipos incluídos automaticamente).</h4>
+                <cr-panel columns="3">
+                    <input-auto label="Tipo de amostra*" ref="autoTipoAmostra" v-model="tipoAmostra" :config="tipoAmostraConf" class="ml-1"/>
+                    <cr-bt primary @click="()=>this.adicionarAmostraTipo()" class="mt-5">Adicionar</cr-bt>
+                </cr-panel>
+                <cr-panel>
+                    <cr-table :config="listaAmostraConf" :collection="cadastro.tipoAmostras" class="mh-3"/>
+                </cr-panel>
+            </cr-panel>
+        </cr-tab-sheet>
       </cr-tab>
       {{ monitoramento.unidadeMedida }}
       <cr-crud-buttons/>
@@ -144,82 +156,101 @@ export default {
   data: function () {
     let self = this;
     return {
-      lista: [],
-      cadastro: {popversao:{},craversao:{}},
-      monitoramento: {},
-      crudConf: {
-        url: ctt.rest + '/ensaio',
-        onNew: function(entity){
-          entity.popversao = {};
-          entity.craversao = {};
-        },
-        onBeforeEdit: function(entity){
-          if(!entity.popversao){
-            entity.popversao = {};
-            entity.craversao = {};
-          }
-        }
-      },
-      validConf: {
-        nomeativ: CrREQUIRED(),
-        abrev: CrREQUIRED(),
-        tipsvc: CrREQUIRED(),
-        areasvc: CrREQUIRED(),
-        idAtv: CrREQUIRED(),
-        numRept: CrREQUIRED()
-      },
-      novolab: undefined,
-      novosup: undefined,
-      novopar:{},
-      gridConf: {
-        fields: 'ID da ATIV. ou MET.|100=>codigo,NOME da ATIVIDADE OU MÉTODO|100=>nome,ABREVIAÇÃO|30=>sigla,TIPO DE SERVIÇO|50=>servicoTipo.nome'
-      },
-      usuarioConf: {
-        url: ctt.rest + '/usuario'
-      },
-      superConf: {
-        fields: 'Nome|100=>nome',
-        emptyMessage: 'Nenhum Responsável Técnico',
-        options: {
-          title: "Excluir",
-          width: 10,
-          buttons: [{icon: 'minus', label: '', click: (sup) => self.removerSup(sup)}]
-        }
-      },
-      labConf: {
-        fields: 'Nome|100=>nome',
-        emptyMessage: 'Nenhum Laboratorista',
-        options: {
-          title: "Excluir",
-          width: 10,
-          buttons: [{icon: 'minus', label: '', click: (lab) => self.removerLab(lab)}]
-        }
-      },
-      parConf: {
-        fields: 'Parâmetro|100=>parametroMonitorado.nome, UM|100=>unidadeMedida.nome, L.I|30=>limiteInferior, L.S|30=>limiteSuperior',
-        emptyMessage: 'Nenhum parâmetro informado!',
-        options: {
-          title: 'Opções',
-          width: 30,
-          buttons: [
-            {
-              icon: 'edit',
-              click: function (parametro) {
-                self.monitoramento = parametro;
-              }
+        lista: [],
+        tipoAmostra: {},
+        cadastro: {popversao: {}, craversao: {}},
+        monitoramento: {},
+        crudConf: {
+            url: ctt.rest + '/ensaio',
+            onNew: function (entity) {
+                entity.popversao = {};
+                entity.craversao = {};
+            },
+            onBeforeEdit: function (entity) {
+                if (!entity.popversao) {
+                    entity.popversao = {};
+                    entity.craversao = {};
+                }
             }
-          ],
         },
-      },
-      parEnsConf: {
-        fields: "Data|50|mask(DATA)=>dataInicio, Limite de Detecção|50=>limiteDeteccao, Limite de Quantificação|30=>limiteQuantificacao, Repetibilidade|30=>repetibilidade, Reprodutibilidade|30=>reprodutibilidade, Taxa de Reprodução|30=>taxaRecuperacao, Incerteza de Medição|30=>incertezaMedicao, Desvio Padrão|30=>desvioPadrao, Coeficiente de Variação|30=>coeficienteVariacao",
-        emptyMessage: 'Nenhum parâmetro informado!',
-        options: {
-          title: 'Opções',
-          width: 30,
-          buttons: [{icon: 'minus', label: '', click: (par) => self.removerPar(par)}
-          ],
+        validConf: {
+            nomeativ: CrREQUIRED(),
+            abrev: CrREQUIRED(),
+            tipsvc: CrREQUIRED(),
+            areasvc: CrREQUIRED(),
+            idAtv: CrREQUIRED(),
+            numRept: CrREQUIRED()
         },
+        novolab: undefined,
+        novosup: undefined,
+        novopar: {},
+        gridConf: {
+            fields: 'ID da ATIV. ou MET.|100=>codigo,NOME da ATIVIDADE OU MÉTODO|100=>nome,ABREVIAÇÃO|30=>sigla,TIPO DE SERVIÇO|50=>servicoTipo.nome'
+        },
+        usuarioConf: {
+            url: ctt.rest + '/usuario'
+        },
+        superConf: {
+            fields: 'Nome|100=>nome',
+            emptyMessage: 'Nenhum Responsável Técnico',
+            options: {
+                title: "Excluir",
+                width: 10,
+                buttons: [{icon: 'minus', label: '', click: (sup) => self.removerSup(sup)}]
+            }
+        },
+        labConf: {
+            fields: 'Nome|100=>nome',
+            emptyMessage: 'Nenhum Laboratorista',
+            options: {
+                title: "Excluir",
+                width: 10,
+                buttons: [{icon: 'minus', label: '', click: (lab) => self.removerLab(lab)}]
+            }
+        },
+        parConf: {
+            fields: 'Parâmetro|100=>parametroMonitorado.nome, UM|100=>unidadeMedida.nome, L.I|30=>limiteInferior, L.S|30=>limiteSuperior',
+            emptyMessage: 'Nenhum parâmetro informado!',
+            options: {
+                title: 'Opções',
+                width: 30,
+                buttons: [
+                    {
+                        icon: 'edit',
+                        click: function (parametro) {
+                            self.monitoramento = parametro;
+                        }
+                    }
+                ],
+            },
+        },
+        parEnsConf: {
+            fields: "Data|50|mask(DATA)=>dataInicio, Limite de Detecção|50=>limiteDeteccao, Limite de Quantificação|30=>limiteQuantificacao, Repetibilidade|30=>repetibilidade, Reprodutibilidade|30=>reprodutibilidade, Taxa de Reprodução|30=>taxaRecuperacao, Incerteza de Medição|30=>incertezaMedicao, Desvio Padrão|30=>desvioPadrao, Coeficiente de Variação|30=>coeficienteVariacao",
+            emptyMessage: 'Nenhum parâmetro informado!',
+            options: {
+                title: 'Opções',
+                width: 30,
+                buttons: [{icon: 'minus', label: '', click: (par) => self.removerPar(par)}
+                ],
+            },
+        },
+        listaAmostraConf: {
+            emptyMessage: 'Nenhum tipo de amostra selecionado!',
+            fields: 'Tipo de Amostra|100=>descricao',
+            options: {
+                title: "Excluir",
+                width: 10,
+                buttons: [
+                    {
+                        icon: 'times-circle',
+                        click: (at) => self.removerAmostraTipo(at)
+                    }
+                ]
+            }
+        },
+        tipoAmostraConf: {
+          url: ctt.rest + '/amostraTipo',
+            displayField: 'descricao',
       },
     };
   },
@@ -264,6 +295,22 @@ export default {
       this.cadastro.laboratoristas.push(this.novolab);
       this.$forceUpdate();
     },
+      adicionarAmostraTipo: function () {
+        if(!this.tipoAmostra.descricao) {
+            this.$refs.autoTipoAmostra.error('informe o tipo de amostra!');
+        }else{
+            this.$refs.autoTipoAmostra.ok();
+            if (!this.cadastro.tipoAmostras) {
+                this.cadastro.tipoAmostras = [];
+            }
+            this.cadastro.tipoAmostras.push(this.tipoAmostra);
+            this.tipoAmostra = {};
+            this.$forceUpdate();
+        }
+      },
+      removerAmostraTipo: function (at) {
+          this.cadastro.tipoAmostras.splice(this.cadastro.tipoAmostras.indexOf(at), 1);
+      },
     removerSup: function (sup) {
       this.cadastro.responsaveisTecnicos.splice(this.cadastro.responsaveisTecnicos.indexOf(sup), 1);
     },
