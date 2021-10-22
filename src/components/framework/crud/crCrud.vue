@@ -15,6 +15,8 @@
      * config
      *   url: link para o endpoint
      *   onNew(entity):void
+     *   onBeforeEdit(entity):void
+     *   onBeforeDelete(entity):void
      *   onValidate(imageUploadList):boolean
      *   onBeforeSave(entity,'INSERT|UPDATE'):void
      * id

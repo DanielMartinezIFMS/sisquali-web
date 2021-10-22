@@ -4,31 +4,36 @@
     <cr-crud-form>
       <cr-tab>
         <cr-tab-sheet title="Geral">
-          <cr-panel columns="3" boxShadow labelTop>
-            <input-longtext ref="nomeativ" label="Nome da atividade ou método" colspan="2" v-model="cadastro.nome"/>
-            <input-text ref="abrev" label="Abreviação" v-model="cadastro.sigla"/>
-            <input-domain ref="tipsvc" label="Tipo de Serviço" cod-group="3" v-model="cadastro.servicoTipo"/>
-            <input-domain ref="areasvc" label="Área do Serviço" cod-group="4" v-model="cadastro.servicoArea"/>
-            <input-text ref="idAtv" label="ID da Atividade ou Método" v-model="cadastro.codigo"/>
-            <input-file-up label="Procedimento Operacional Padrão - POP (pdf,doc,docx,odt)" v-model="cadastro.popversao.nome" group="documento" accept=".pdf"/>
-            <input-integer ref="numRept" label="Número padrão de repetições" min="0" v-model="cadastro.qtdeRepeticao"/>
-            <input-integer label="Número de ensaios/dia" min="0" v-model="cadastro.qtdeEnsaioDiario"/>
-            <input-integer label="Carência(dias)" min="0" v-model="cadastro.carencia"/>
+          <cr-panel columns="6" boxShadow labelTop>
+            <input-longtext colspan="3"     ref="nomeativ"  label="Nome da atividade ou método"  v-model="cadastro.nome"/>
+            <input-text     ref="abrev"     label="Abreviação" v-model="cadastro.sigla"/>
+            <input-text     colspan="2"     ref="idAtv"     label="ID da Atividade ou Método" v-model="cadastro.codigo"/>
+            <input-domain   ref="tipsvc"    label="Tipo de Serviço" cod-group="3" v-model="cadastro.servicoTipo"/>
+            <input-domain   ref="areasvc"   label="Área do Serviço" cod-group="4" v-model="cadastro.servicoArea"/>
+            <span colspan="4"> </span>
+            <input-file-up  colspan="3"     label="Procedimento Operacional Padrão - POP (pdf,doc,docx,odt)" v-model="cadastro.popversao.nome" group="documento" accept=".pdf"/>
+            <input-file-up  colspan="3"     label="Condições para recebimento de Amostras - CRA (pdf,doc,docx,odt)" v-model="cadastro.craversao.nome" group="documento" accept=".pdf"/>
+            <input-integer  colspan="2" ref="numRept"   label="Número padrão de repetições" min="0" v-model="cadastro.qtdeRepeticao"/>
+            <input-integer  label="Número de ensaios/dia" min="0" v-model="cadastro.qtdeEnsaioDiario"/>
+            <input-integer  label="Carência(dias)" min="0" v-model="cadastro.carencia"/>
             <input-currency label="Preço(R$)" v-model="cadastro.preco"/>
             <input-currency label="Custo(R$)" v-model="cadastro.custo"/>
-            <span></span>
-            <input-check label="A cobrança deverá ser feita por lote de amostras analizadas" colspan="3"
-                         v-model="cadastro.cobrarPorLote" @change="$forceUpdate()"/>
-            <span></span><span></span>
-            <input-currency v-if="cadastro.cobrarPorLote" label="Preço por Lote(R$)" v-model="cadastro.precoPorLote"/>
-            <input-currency v-if="cadastro.cobrarPorLote" label="Custo por Lote(R$)" v-model="cadastro.custoPorLote"/>
-            <input-integer  v-if="cadastro.cobrarPorLote" label="Numero de amostras/Lote" min="0" v-model="cadastro.qtdeAmostraPorLote"/>
-            <input-check label="Gerar laudo de todas as amostras individualmente" colspan="3"
-                         v-model="cadastro.gerarLaudoIndividual"/>
-            <span></span><span></span>
-            <input-check label="Ativo no escopo" colspan="3" v-model="cadastro.ativoNoEscopo"/>
-            <span></span><span></span>
-            <input-check label="Acreditado na norma ISO 17.025" colspan="3" v-model="cadastro.iso17025"/>
+
+            <input-check    colspan="2"     label="A cobrança deverá ser feita por lote de amostras analizadas"
+                            v-model="cadastro.cobrarPorLote" @change="$forceUpdate()"/>
+            <span colspan="5"> </span>
+            <cr-panel colspan="6" columns="6" v-if="cadastro.cobrarPorLote" >
+              <input-currency label="Preço por Lote(R$)" v-model="cadastro.precoPorLote"/>
+              <input-currency label="Custo por Lote(R$)" v-model="cadastro.custoPorLote"/>
+              <input-integer  label="Numero de amostras/Lote" min="0" v-model="cadastro.qtdeAmostraPorLote"/>
+              <span colspan="3"> </span>
+            </cr-panel>
+            <cr-panel colspan="6">
+              <input-check    label="Gerar laudo de todas as amostras individualmente"
+                              v-model="cadastro.gerarLaudoIndividual"/>
+              <input-check    label="Ativo no escopo" v-model="cadastro.ativoNoEscopo"/>
+              <input-check    label="Acreditado na norma ISO 17.025" v-model="cadastro.iso17025"/>
+            </cr-panel>
           </cr-panel>
         </cr-tab-sheet>
         <cr-tab-sheet title="CICA">
@@ -117,19 +122,30 @@ import inputFractional from "../framework/form/inputFractional";
 import CrBt from "../framework/common/crButton";
 import CrTable from "../framework/common/crTable";
 import inputAuto from "../framework/form/advanced/inputAuto";
+import inputFileUp from "../framework/form/advanced/inputFileUp";
 import {CrREQUIRED} from "../framework/CrValidator";
 
 export default {
   name: "EnsaioTipoCad",
-  components: {CrTable,inputAuto,InputRadio,InputCheck,inputInteger,InputDomain,inputCurrency,CrTabSheet,CrTab,CrPanel,CrCrud,CrCrudGrid,CrCrudForm,inputLongtext,inputText,inputGroup,inputFractional,CrBt,},
+  components: {inputFileUp, CrTable,inputAuto,InputRadio,InputCheck,inputInteger,InputDomain,inputCurrency,CrTabSheet,CrTab,CrPanel,CrCrud,CrCrudGrid,CrCrudForm,inputLongtext,inputText,inputGroup,inputFractional,CrBt,},
   data: function () {
     let self = this;
     return {
       lista: [],
-      cadastro: {},
+      cadastro: {popversao:{},craversao:{}},
       monitoramento: {},
       crudConf: {
         url: ctt.rest + '/ensaio',
+        onNew: function(entity){
+          entity.popversao = {};
+          entity.craversao = {};
+        },
+        onBeforeEdit: function(entity){
+          if(!entity.popversao){
+            entity.popversao = {};
+            entity.craversao = {};
+          }
+        }
       },
       validConf: {
         nomeativ: CrREQUIRED(),
