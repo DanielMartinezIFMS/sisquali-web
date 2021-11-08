@@ -7,7 +7,7 @@ import PlanoOperacionalCad from './components/parametros/PlanoOperacionalCad';
 import PlanoOperacionalAprov from './components/parametros/PlanoOperacionalAprov';
 import EnsaioTipoCad from "@/components/parametros/EnsaioTipoCad";
 import UsuarioCad from "@/components/parametros/UsuarioCad";
-import ServicoInternoAcompanhamento from "@/components/servico/ServicoInternoAcompanhamento";
+import ServicoInternoAcompanhamento from "@/components/servicos/ServicoInternoAcompanhamento";
 
 Vue.use(Router);
 
