@@ -5,6 +5,7 @@ import Vue from 'vue';
  * columns - Quantidade de colunas
  * colspan - Numero de colunas usadas do crudpannel pai
  * title - titulo do conjunto de dados
+ * expandButton - ativa botão expandir/contrair
  * labelTop - posicao do label nos inputs filhos (Topo)
  * labelLeft - posicao do label nos inputs filhos(Esquerda)
  * boxShadow - mostra uma borda com sombra
@@ -15,10 +16,11 @@ import Vue from 'vue';
  * visible - true/false mostra ou nao a camada inicialmente
  * -------------------------------------------------
  * show(true/false) - mostra/esconde a camada
+ * expand(true/false) - espande/contrai a camada
  */
 export default Vue.component('CrPanel', {
   render: function (createElement) {
-    var css, rows, lns = [], l = [], ct = 0, span = 0, cfat = 0, cols = 1;
+    var css,cssx, rows, lns = [], l = [], ct = 0, span = 0, cfat = 0, cols = 1;
     if (this.$attrs.cols) {
       cols = this.$attrs.cols;
     } else {
@@ -52,18 +54,17 @@ export default Vue.component('CrPanel', {
     if (ct < cols) {
       lns.push(l);
     }
-    css = this.$crUtils.has('labelTop',this.$attrs) ? 'crudPanel labelTop' : 'crudPanel labelLeft';
-    css += this.$crUtils.has('box',this.$attrs) ? ' boxSingle' : '';
-    css += this.$crUtils.has('boxShadow',this.$attrs) ? ' boxShadow' : '';
-    css += this.$crUtils.has('noMargin',this.$attrs) ? ' m-0' : '';
+    cssx = 'crudPanel';
+    cssx += this.$crUtils.has('noMargin',this.$attrs) ? ' m-0' : '';
+    cssx += this.$crUtils.has('box',this.$attrs) ? ' boxSingle' : '';
+    cssx += this.$crUtils.has('boxShadow',this.$attrs) ? ' boxShadow' : '';
+    cssx += this.$crUtils.has('noGrow',this.$attrs) ? ' noGrow' : '';
+    cssx += (!this.display) ? ' d-none' : ' d-block';
+
+    css = this.$crUtils.has('labelTop',this.$attrs) ? 'crudPanelContent labelTop' : 'crudPanelContent labelLeft';
     css += this.$crUtils.has('noPadding',this.$attrs) ? ' p-0' : '';
-    css += this.$crUtils.has('noGrow',this.$attrs) ? ' noGrow' : '';
-    css += (!this.display) ? ' d-none' : ' d-block';
     rows = [];
 
-    if (this.title) {
-      rows.push(createElement('div', {class: 'panelTitle'}, this.title));
-    }
 
     lns.map(v => {
       if (Array.isArray(v)) {
@@ -72,7 +73,21 @@ export default Vue.component('CrPanel', {
         rows.push(v);
       }
     });
-    return createElement('div', {class: css}, rows);
+
+    if (this.title) {
+      return createElement('div', {class: cssx}, [
+                 createElement('div', {class: 'panelTitle'}, this.title),
+                 createElement('div', {class: css},rows)
+                ]);
+
+
+    } else {
+      return createElement('div', {class: cssx}, [
+        createElement('div', {class: css},rows)
+      ]);
+    }
+
+
   },
   props: ['title', 'visible'],
   data: function () {

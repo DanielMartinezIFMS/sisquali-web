@@ -73,7 +73,7 @@
         <cr-tab-sheet title="Responsáveis">
           <cr-panel columns="2" boxShadow>
             <cr-panel box labelTop>
-              <input-group label="Responsável Técnico" class="pl-0 pb-0">
+              <input-group label="Responsável Técnico*" class="pl-0 pb-0">
                 <input-auto class="pl-0" ref="responsavel" remaining v-model="novosup"
                             :config="usuarioConf"/>
                 <cr-bt class="mt-1" primary icon="plus" @click="()=>adicionarSup()" :desabled="!this.novosup">Inserir</cr-bt>
@@ -92,7 +92,8 @@
         </cr-tab-sheet>
         <cr-tab-sheet title="Config.Resgistro"></cr-tab-sheet>
         <cr-tab-sheet title="Parâmetros">
-          <cr-panel columns="5" boxShadow labelTop>
+          <cr-panel boxShadow labelTop>
+              <cr-panel columns="5" title="Parâmetros" box noMargin noPadding>
                 <input-date v-model="novopar.dataInicio" label="Data" ref="datIn"/>
                 <input-fractional v-model="novopar.limiteDeteccao" label="Limite de detecção"/>
                 <input-fractional v-model="novopar.limiteQuantificacao" label="Limite de quantificação"/>
@@ -102,8 +103,9 @@
                 <input-fractional v-model="novopar.incertezaMedicao" label="Incerteza de Medição"/>
                 <input-fractional v-model="novopar.desvioPadrao" label="Desvio padrão"/>
                 <input-fractional v-model="novopar.coeficienteVariacao" label="Coeficiente de variação"/>
-            <cr-bt class="mt-5 ml-2" primary wAuto icon="plus" @click="()=>adicionarPar()" :desabled="!this.novopar">Adicionar parâmetros</cr-bt>
-            <cr-table colspan="7"  :config="parEnsConf" :collection="cadastro.parametros"/>
+                <cr-bt class="mt-5 ml-2" primary wAuto icon="plus" @click="()=>adicionarPar()" :desabled="!this.novopar">Adicionar parâmetros</cr-bt>
+              </cr-panel>
+            <cr-table  :config="parEnsConf" :collection="cadastro.parametros"/>
           </cr-panel>
         </cr-tab-sheet>
         <cr-tab-sheet title="Amostras">
@@ -268,6 +270,7 @@ export default {
       this.monitoramento = {};
     },
     adicionarSup: function () {
+
       if (!this.cadastro.responsaveisTecnicos) {
         this.cadastro.responsaveisTecnicos = [];
       }

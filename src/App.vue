@@ -11,6 +11,7 @@
                 <router-link :to="{name:'PlanoOperacionalAprov'}">Aprovar Plano Op.</router-link>
                 <router-link :to="{name:'EnsaioTipoCad'}">Tipos de Ensaio</router-link>
                 <router-link :to="{name:'UsuarioCad'}">Usuarios</router-link>
+                <router-link :to="{name:'ServIConsulta'}">Acompanhamento</router-link>
             </div>
         </div>
         <div class="flexGrow">
@@ -771,6 +772,15 @@
         height: 100%;
     }
 
+
+    .boxSingle > .crudPanelContent, .boxShadow > .crudPanelContent  {
+      padding: 0.5em;
+    }
+    .crudPanelContent{
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
     .crudPanel {
         display: flex;
         flex-direction: column;
@@ -779,14 +789,12 @@
 
     .crudPanel.boxShadow {
         margin: 0.5em;
-        padding: 0.5em;
         border: 1px solid silver;
         box-shadow: 1px 1px 2px grey;
     }
 
     .crudPanel.boxSingle {
         margin: 0.5em;
-        padding: 1em;
         border: 1px solid silver;
     }
 
@@ -795,15 +803,12 @@
     }
     .panelTitle {
         border-bottom: 1px solid silver;
-        font-size: 0.8em;
+        font-size: 1.2em;
         font-weight: bold;
         padding: 0.2em;
         padding-left: 0.5em;
         margin-bottom: 0.5em;
-        margin-left: -0.6em !important;
-        margin-right: -0.6em;
         background-color: lightgrey;
-        margin-top: -0.65em;
     }
 
     .noGrow {

@@ -60,7 +60,12 @@ export default Vue.component('crCrudButtons', {
           if (crud.getFilter()) {
             crud.getFilter().show(true);
           }
-         crud.getGrid().show = true;
+          if(crud.getGrid()) {
+             crud.getGrid().show = true;
+          }
+         if(crud.getTree()) {
+            crud.getTree().show = true;
+         }
          this.$root.crudFiles = undefined;
       },
       excluir: function () {

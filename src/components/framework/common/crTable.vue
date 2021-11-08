@@ -57,7 +57,7 @@
      *
      *  }
      *  <D> - Disposição na coluna ( C - Centro ou R - Direita ou L - Esquerda )
-     *  <Formato> - image | mask('Mascara')
+     *  <Formato> - image | mask(Mascara)
      *
      *  ******************************
      *  O Tamanho é intuitivo, defina uma tamanho para o maior campo e com base nele defina o dos demais

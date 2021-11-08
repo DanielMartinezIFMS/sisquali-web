@@ -7,6 +7,7 @@ import PlanoOperacionalCad from './components/parametros/PlanoOperacionalCad';
 import PlanoOperacionalAprov from './components/parametros/PlanoOperacionalAprov';
 import EnsaioTipoCad from "@/components/parametros/EnsaioTipoCad";
 import UsuarioCad from "@/components/parametros/UsuarioCad";
+import ServicoInternoAcompanhamento from "@/components/servico/ServicoInternoAcompanhamento";
 
 Vue.use(Router);
 
@@ -20,6 +21,7 @@ export default new Router({
         {path: '/aprov/planooperacional', name: 'PlanoOperacionalAprov', component: PlanoOperacionalAprov} ,
         {path: '/cad/ensaioTipo', name: 'EnsaioTipoCad', component: EnsaioTipoCad} ,
         {path: '/cad/usuario', name: 'UsuarioCad', component: UsuarioCad} ,
+        {path: '/servico/interno/consulta', name: 'ServIConsulta', component: ServicoInternoAcompanhamento} ,
 
     ]
 });

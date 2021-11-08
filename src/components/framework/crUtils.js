@@ -246,6 +246,6 @@ export default {
         },
         has: function (arg, obj) {
             return Object.prototype.hasOwnProperty.call(obj, arg);
-        }
+        },
     }
 };
