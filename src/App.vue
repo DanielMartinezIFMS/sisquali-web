@@ -11,6 +11,7 @@
                 <router-link :to="{name:'PlanoOperacionalAprov'}">Aprovar Plano Op.</router-link>
                 <router-link :to="{name:'EnsaioTipoCad'}">Tipos de Ensaio</router-link>
                 <router-link :to="{name:'UsuarioCad'}">Usuarios</router-link>
+                <router-link :to="{name:'ServicoInternoCad'}">Serviço Interno</router-link>
                 <router-link :to="{name:'ServIConsulta'}">Acompanhamento</router-link>
             </div>
         </div>
