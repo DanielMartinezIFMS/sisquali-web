@@ -247,5 +247,13 @@ export default {
         has: function (arg, obj) {
             return Object.prototype.hasOwnProperty.call(obj, arg);
         },
+        filteredUrl(url,filterObj){
+            let result = url+"/listar?args=";
+            let sbody='';
+            for (var key in filterObj) {
+                sbody += ((sbody === '') ? '' : '&') + key + '=' + encodeURIComponent(filterObj[key]);
+            }
+            return result+sbody;
+        }
     }
 };
