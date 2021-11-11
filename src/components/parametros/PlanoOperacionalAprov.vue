@@ -123,13 +123,13 @@ export default {
         args.inicioEntrega = this.inicio;
         args.finalEntrega = this.final;
       }
-      this.lista = await this.$get(ctt.rest + '/planoOperacinal/listar?args=' + encodeURI(JSON.stringify(args)));
+      this.lista = await this.$get(ctt.rest + '/planoOperacional/listar?args=' + encodeURI(JSON.stringify(args)));
     },
     aprovar: async function (planoOperacional) {
         //  this.planoOperacional.usuarioRejeicao=this.security.user
         planoOperacional.dhAprovacao=new Date();
         planoOperacional.situacao = {id:6, nome:'APROVADO'};
-        let planoAlterado = await this.$put(ctt.rest + '/planoOperacinal',planoOperacional);
+        let planoAlterado = await this.$put(ctt.rest + '/planoOperacional',planoOperacional);
         this.lista[this.lista.indexOf(planoOperacional)] = planoAlterado;
         this.$root.mens.success('Atenção','Plano operacional aprovado com sucesso!');
     },
@@ -146,7 +146,7 @@ export default {
      //  this.planoOperacional.usuarioRejeicao=this.security.user
          this.planoOperacional.dhRegeicao=new Date();
          this.planoOperacional.situacao = {id:7, nome:'REJEITADO'};
-         let planoAlterado = await this.$put(ctt.rest + '/planoOperacinal',this.planoOperacional);
+         let planoAlterado = await this.$put(ctt.rest + '/planoOperacional',this.planoOperacional);
          this.lista[this.lista.indexOf(this.planoOperacional)] = planoAlterado;
          this.$refs.wRejeicao.close();
          this.$root.mens.success('Atenção','Plano operacional rejeitado com sucesso!');

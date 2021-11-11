@@ -38,7 +38,7 @@ import CrCrudButtons from '../framework/crud/crCrudButtons';
           cadastro: {},
 
           crudConf: {
-            url: ctt.rest + '/planoOperacinal',
+            url: ctt.rest + '/planoOperacional',
             onBeforeSave: function (ent, op){
               if(op==='INSERT'){
                 ent.situacao = self.status;
