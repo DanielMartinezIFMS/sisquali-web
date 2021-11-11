@@ -249,10 +249,7 @@ export default {
         },
         filteredUrl(url,filterObj){
             let result = url+"/listar?args=";
-            let sbody='';
-            for (var key in filterObj) {
-                sbody += ((sbody === '') ? '' : '&') + key + '=' + encodeURIComponent(filterObj[key]);
-            }
+            let sbody=encodeURIComponent(JSON.stringify(filterObj))
             return result+sbody;
         }
     }
